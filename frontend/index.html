@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Smart Transportation AI</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:#2e3348;
+  --text:#e8eaf6;--muted:#8892b0;--accent:#4fc3f7;
+  --green:#4caf50;--yellow:#ffb300;--orange:#ff7043;--red:#ef5350;
+  --radius:10px;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:1000}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.brand-icon{font-size:22px}
+.badge{background:#1565c0;color:#90caf9;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px}
+.header-right{display:flex;align-items:center;gap:16px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.stat-pill{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:12px;display:flex;align-items:center;gap:6px}
+.stat-pill b{color:var(--accent)}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.workspace{display:grid;grid-template-columns:1fr 340px;flex:1;overflow:hidden}
+
+/* ── Map ─────────────────────────────────────────────────────────────── */
+#map{width:100%;height:100%;z-index:1}
+
+/* ── Right panel ──────────────────────────────────────────────────────── */
+#panel{background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+
+.tab-bar{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.tab{flex:1;padding:12px 0;text-align:center;cursor:pointer;font-size:12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:all .2s}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none;flex:1;overflow-y:auto;padding:16px}
+.tab-content.active{display:flex;flex-direction:column;gap:14px}
+
+/* Shared card */
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+
+/* Route optimizer */
+.route-form{display:flex;flex-direction:column;gap:8px}
+select,input[type=text]{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font:inherit;outline:none;transition:border-color .2s}
+select:focus,input:focus{border-color:var(--accent)}
+.btn{border:none;border-radius:6px;padding:9px 18px;font:inherit;font-weight:700;cursor:pointer;transition:all .15s;width:100%}
+.btn-primary{background:var(--accent);color:#000}
+.btn-primary:hover{background:#81d4fa}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+.route-result{display:none;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;font-size:12px}
+.route-result.show{display:block}
+.route-stat{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border)}
+.route-stat:last-child{border-bottom:none}
+.route-stat .label{color:var(--muted)}
+.route-stat .val{font-weight:700}
+.route-path{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.6}
+
+/* Traffic level indicator */
+.traffic-bar{height:6px;border-radius:3px;margin-top:4px;transition:width .4s}
+
+/* Fleet cards */
+.vehicle-card{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.vehicle-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.vehicle-info{flex:1;overflow:hidden}
+.v-name{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v-dest{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v-speed{font-size:12px;color:var(--accent);font-weight:700;white-space:nowrap}
+
+/* Incidents */
+.incident-item{background:var(--bg);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:8px 12px}
+.incident-item.moderate{border-color:var(--orange)}
+.incident-item.low{border-color:var(--yellow)}
+.inc-title{font-weight:600;font-size:12px}
+.inc-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.sev-badge{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px}
+.sev-high{background:#ef535022;color:var(--red)}
+.sev-moderate{background:#ff704322;color:var(--orange)}
+.sev-low{background:#ffb30022;color:var(--yellow)}
+
+/* Chart */
+.chart-wrap{position:relative;height:180px}
+
+/* Analytics stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-box{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center}
+.stat-box .s-val{font-size:22px;font-weight:700;color:var(--accent)}
+.stat-box .s-lab{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+
+/* Traffic legend */
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:50%}
+
+/* Spinner */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="brand">
+    <span class="brand-icon">🚦</span>
+    Smart Transportation AI
+    <span class="badge">LIVE</span>
+  </div>
+  <div class="header-right">
+    <div class="stat-pill"><div class="live-dot"></div> Real-time</div>
+    <div class="stat-pill">Avg Speed: <b id="h-speed">—</b> km/h</div>
+    <div class="stat-pill">Congested: <b id="h-cong">—</b> roads</div>
+    <div class="stat-pill">Incidents: <b id="h-inc">—</b></div>
+  </div>
+</header>
+
+<!-- ── Workspace ─────────────────────────────────────────────────────────────── -->
+<div class="workspace">
+  <div id="map"></div>
+
+  <div id="panel">
+    <div class="tab-bar">
+      <div class="tab active" onclick="setTab('route',this)">🗺 Route AI</div>
+      <div class="tab" onclick="setTab('fleet',this)">🚗 Fleet</div>
+      <div class="tab" onclick="setTab('traffic',this)">📊 Traffic</div>
+    </div>
+
+    <!-- Route Tab -->
+    <div class="tab-content active" id="tab-route">
+      <div class="card">
+        <div class="card-title">AI Route Optimizer (A*)</div>
+        <div class="route-form">
+          <select id="sel-origin"><option value="">Select origin…</option></select>
+          <select id="sel-dest"><option value="">Select destination…</option></select>
+          <button class="btn btn-primary" id="opt-btn" onclick="optimizeRoute()">Optimize Route</button>
+        </div>
+        <div class="route-result" id="route-result"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Traffic Legend</div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:#4caf50"></div>Free flow (&lt;35%)</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#ffb300"></div>Moderate (35–65%)</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#ff7043"></div>Heavy (65–80%)</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#ef5350"></div>Congested (&gt;80%)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Recent Routes</div>
+        <div id="route-history" style="font-size:12px;color:var(--muted)">No routes yet.</div>
+      </div>
+    </div>
+
+    <!-- Fleet Tab -->
+    <div class="tab-content" id="tab-fleet">
+      <div class="card">
+        <div class="card-title">Live Fleet — 6 Vehicles</div>
+        <div id="fleet-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+    </div>
+
+    <!-- Traffic Tab -->
+    <div class="tab-content" id="tab-traffic">
+      <div class="card">
+        <div class="card-title">Network Statistics</div>
+        <div class="stats-grid" id="analytics-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚠️ Active Incidents</div>
+        <div id="incident-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">12-Hour Traffic Forecast</div>
+        <div class="chart-wrap"><canvas id="traffic-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+let map, edgeLayers = {}, nodeMarkers = {}, vehicleMarkers = {}, routeLayer = null;
+let trafficChart = null;
+let nodes = [], edges = [];
+
+// ── Init map ─────────────────────────────────────────────────────────────────
+function initMap() {
+  map = L.map('map', { center: [40.730, -73.995], zoom: 13, zoomControl: true });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors', maxZoom: 19
+  }).addTo(map);
+}
+
+// ── Load network ──────────────────────────────────────────────────────────────
+async function loadNetwork() {
+  [nodes, edges] = await Promise.all([
+    fetch(API + '/api/nodes').then(r => r.json()),
+    fetch(API + '/api/traffic/edges').then(r => r.json()),
+  ]);
+
+  // Populate selects
+  const opts = nodes.map(n => `<option value="${n.id}">${n.name}</option>`).join('');
+  document.getElementById('sel-origin').innerHTML = '<option value="">Select origin…</option>' + opts;
+  document.getElementById('sel-dest').innerHTML   = '<option value="">Select destination…</option>' + opts;
+
+  // Draw edges
+  edges.forEach(e => drawEdge(e));
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const circle = L.circleMarker([n.lat, n.lng], {
+      radius: 5, fillColor: '#4fc3f7', color: '#1565c0', weight: 1.5,
+      fillOpacity: 0.9, opacity: 1
+    }).bindTooltip(n.name, {permanent: false, className: 'map-tooltip'}).addTo(map);
+    nodeMarkers[n.id] = circle;
+  });
+}
+
+function trafficColor(t) {
+  if (t < 0.35) return '#4caf50';
+  if (t < 0.65) return '#ffb300';
+  if (t < 0.80) return '#ff7043';
+  return '#ef5350';
+}
+
+function drawEdge(e) {
+  const src = nodes.find(n => n.id === e.source);
+  const dst = nodes.find(n => n.id === e.target);
+  if (!src || !dst) return;
+  const color = trafficColor(e.traffic_level);
+  const weight = 4 + e.traffic_level * 4;
+  const line = L.polyline([[src.lat, src.lng], [dst.lat, dst.lng]], {
+    color, weight, opacity: 0.82
+  }).bindTooltip(
+    `${src.name} → ${dst.name}<br>Traffic: ${(e.traffic_level*100).toFixed(0)}%<br>~${e.travel_time_min.toFixed(1)} min`,
+    {sticky: true}
+  ).addTo(map);
+  edgeLayers[e.id] = line;
+}
+
+// ── Refresh traffic ───────────────────────────────────────────────────────────
+async function refreshTraffic() {
+  try {
+    edges = await fetch(API + '/api/traffic/edges').then(r => r.json());
+    edges.forEach(e => {
+      const layer = edgeLayers[e.id];
+      if (!layer) return;
+      const color = trafficColor(e.traffic_level);
+      const weight = 4 + e.traffic_level * 4;
+      layer.setStyle({ color, weight });
+      layer.setTooltipContent(
+        `${e.source} → ${e.target}<br>Traffic: ${(e.traffic_level*100).toFixed(0)}%<br>~${e.travel_time_min.toFixed(1)} min`
+      );
+    });
+  } catch(e) {}
+}
+
+// ── Fleet ─────────────────────────────────────────────────────────────────────
+const vehicleEmoji = {delivery:'🚐', bus:'🚌', taxi:'🚕', emergency:'🚓'};
+
+function vehicleIcon(v) {
+  return L.divIcon({
+    html: `<div style="font-size:20px;filter:drop-shadow(0 2px 4px #000)">${vehicleEmoji[v.type]||'🚗'}</div>`,
+    className: '', iconSize: [24, 24], iconAnchor: [12, 12]
+  });
+}
+
+async function refreshFleet() {
+  try {
+    const vehicles = await fetch(API + '/api/fleet').then(r => r.json());
+    vehicles.forEach(v => {
+      if (vehicleMarkers[v.id]) {
+        vehicleMarkers[v.id].setLatLng([v.lat, v.lng]);
+        vehicleMarkers[v.id].setTooltipContent(`${v.name}<br>${v.speed_kmh} km/h → ${v.destination}`);
+      } else {
+        vehicleMarkers[v.id] = L.marker([v.lat, v.lng], {icon: vehicleIcon(v), zIndexOffset: 500})
+          .bindTooltip(`${v.name}<br>${v.speed_kmh} km/h → ${v.destination}`, {permanent:false}).addTo(map);
+      }
+    });
+    renderFleetPanel(vehicles);
+  } catch(e) {}
+}
+
+function renderFleetPanel(vehicles) {
+  document.getElementById('fleet-list').innerHTML = vehicles.map(v => `
+    <div class="vehicle-card">
+      <div class="vehicle-icon" style="background:${v.color}22;color:${v.color}">${vehicleEmoji[v.type]||'🚗'}</div>
+      <div class="vehicle-info">
+        <div class="v-name">${v.name}</div>
+        <div class="v-dest">→ ${v.destination}</div>
+      </div>
+      <div class="v-speed">${v.speed_kmh}<br><span style="font-size:9px;color:var(--muted)">km/h</span></div>
+    </div>
+  `).join('');
+}
+
+// ── Route optimization ────────────────────────────────────────────────────────
+async function optimizeRoute() {
+  const origin = document.getElementById('sel-origin').value;
+  const dest   = document.getElementById('sel-dest').value;
+  if (!origin || !dest) { alert('Select origin and destination.'); return; }
+  if (origin === dest)  { alert('Origin and destination must differ.'); return; }
+
+  const btn = document.getElementById('opt-btn');
+  btn.innerHTML = '<span class="spin"></span>Optimizing…';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(API + '/api/routes/optimize', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({origin, destination: dest})
+    });
+    if (!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+    showRouteResult(data);
+    drawRoute(data);
+    await loadRouteHistory();
+  } catch(e) {
+    alert('Route error: ' + e.message);
+  } finally {
+    btn.textContent = 'Optimize Route';
+    btn.disabled = false;
+  }
+}
+
+function showRouteResult(d) {
+  const el = document.getElementById('route-result');
+  el.className = 'route-result show';
+  const tColor = d.avg_traffic > 0.65 ? 'var(--red)' : d.avg_traffic > 0.35 ? 'var(--yellow)' : 'var(--green)';
+  el.innerHTML = `
+    <div class="route-stat"><span class="label">Distance</span><span class="val">${d.distance_km} km</span></div>
+    <div class="route-stat"><span class="label">Travel time</span><span class="val" style="color:var(--accent)">${d.travel_time_min.toFixed(1)} min</span></div>
+    <div class="route-stat"><span class="label">Baseline (no AI)</span><span class="val">${d.baseline_time_min.toFixed(1)} min</span></div>
+    <div class="route-stat"><span class="label">AI time saved</span><span class="val" style="color:var(--green)">+${d.time_saved_min.toFixed(1)} min</span></div>
+    <div class="route-stat"><span class="label">Avg traffic</span>
+      <span class="val" style="color:${tColor}">${(d.avg_traffic*100).toFixed(0)}%</span>
+    </div>
+    <div class="route-path">📍 ${d.path_names.join(' → ')}</div>
+  `;
+}
+
+function drawRoute(data) {
+  if (routeLayer) { map.removeLayer(routeLayer); routeLayer = null; }
+  routeLayer = L.polyline(data.path_coords, {
+    color: '#4fc3f7', weight: 7, opacity: 0.9,
+    dashArray: null,
+  }).addTo(map);
+  map.fitBounds(routeLayer.getBounds(), {padding: [40, 40]});
+
+  // Highlight nodes on route
+  data.path.forEach(nid => {
+    const m = nodeMarkers[nid];
+    if (m) m.setStyle({fillColor:'#fff176', radius:7});
+    setTimeout(() => { if(m) m.setStyle({fillColor:'#4fc3f7', radius:5}); }, 8000);
+  });
+}
+
+async function loadRouteHistory() {
+  const hist = await fetch(API + '/api/routes/history?limit=5').then(r => r.json());
+  const el = document.getElementById('route-history');
+  if (!hist.length) { el.textContent = 'No routes yet.'; return; }
+  el.innerHTML = hist.map(r => `
+    <div style="padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between">
+      <span style="color:var(--text)">${r.origin_name} → ${r.destination_name}</span>
+      <span style="color:var(--accent)">${r.travel_time_min?.toFixed(1)} min</span>
+    </div>
+  `).join('');
+}
+
+// ── Analytics ─────────────────────────────────────────────────────────────────
+async function refreshAnalytics() {
+  try {
+    const d = await fetch(API + '/api/analytics').then(r => r.json());
+
+    // Header stats
+    document.getElementById('h-speed').textContent = d.avg_speed_kmh;
+    document.getElementById('h-cong').textContent  = d.congested_count;
+    document.getElementById('h-inc').textContent   = d.active_incidents;
+
+    // Stats grid
+    document.getElementById('analytics-grid').innerHTML = `
+      <div class="stat-box"><div class="s-val">${d.avg_speed_kmh}</div><div class="s-lab">Avg km/h</div></div>
+      <div class="stat-box"><div class="s-val" style="color:var(--red)">${d.congested_count}</div><div class="s-lab">Congested</div></div>
+      <div class="stat-box"><div class="s-val" style="color:var(--green)">${d.free_flow_count}</div><div class="s-lab">Free Flow</div></div>
+      <div class="stat-box"><div class="s-val" style="color:var(--yellow)">${d.active_incidents}</div><div class="s-lab">Incidents</div></div>
+    `;
+
+    // Chart
+    renderChart(d.predictions);
+
+    // Incidents
+    const incidents = await fetch(API + '/api/traffic/incidents').then(r => r.json());
+    document.getElementById('incident-list').innerHTML = incidents.map(i => `
+      <div class="incident-item ${i.severity}">
+        <div class="inc-title">${i.description}
+          <span class="sev-badge sev-${i.severity}">${i.severity.toUpperCase()}</span>
+        </div>
+        <div class="inc-meta">Edge: ${i.edge_id.replace('__',' ↔ ')}</div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+function renderChart(predictions) {
+  const labels = predictions.map(p => p.label);
+  const data   = predictions.map(p => Math.round(p.avg_traffic * 100));
+  const colors = data.map(v => v > 65 ? '#ef5350' : v > 35 ? '#ffb300' : '#4caf50');
+
+  if (trafficChart) { trafficChart.destroy(); }
+  const ctx = document.getElementById('traffic-chart').getContext('2d');
+  trafficChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#8892b0', font: {size:10} }, grid: { color: '#2e3348' } },
+        y: { ticks: { color: '#8892b0', font:{size:10}, callback: v => v+'%' },
+             grid: { color: '#2e3348' }, min: 0, max: 100 },
+      },
+    }
+  });
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function setTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ── Boot & polling ────────────────────────────────────────────────────────────
+async function boot() {
+  initMap();
+  await loadNetwork();
+  await Promise.all([refreshFleet(), refreshAnalytics()]);
+  await loadRouteHistory();
+
+  // Live updates every 10 seconds
+  setInterval(async () => {
+    await refreshTraffic();
+    await refreshFleet();
+    await refreshAnalytics();
+  }, 10_000);
+}
+boot();
+</script>
+</body>
+</html>
