@@ -1,0 +1,8 @@
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+exclude = [".venv", "data", "tests/fixtures"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # line length handled loosely; long docstrings/URLs are fine
