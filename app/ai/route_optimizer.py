@@ -3,7 +3,7 @@ import heapq
 import math
 from typing import Dict, List, Optional, Tuple
 
-from app.ai.city_graph import ADJACENCY, NODES, ALL_EDGES, haversine
+from app.ai.city_graph import ADJACENCY, NODES, haversine
 
 
 def _heuristic(node_id: str, goal_id: str) -> float:

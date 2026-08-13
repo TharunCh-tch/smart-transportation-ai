@@ -10,8 +10,7 @@ from typing import Dict, List
 
 import numpy as np
 
-from app.ai.city_graph import EDGE_IDS, ALL_EDGES
-
+from app.ai.city_graph import ALL_EDGES, EDGE_IDS
 
 # ── Time-of-day traffic pattern ───────────────────────────────────────────────
 

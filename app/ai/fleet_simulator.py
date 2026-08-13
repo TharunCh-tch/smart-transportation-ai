@@ -3,11 +3,10 @@ Simulates 6 vehicles moving along fixed routes in real time.
 Position is computed deterministically from wall-clock time so
 every API call returns a consistent snapshot.
 """
-import math
 import time
 from typing import Dict, List
 
-from app.ai.city_graph import NODES, ADJACENCY, haversine
+from app.ai.city_graph import ADJACENCY, NODES, haversine
 
 FLEET: List[Dict] = [
     {"id": "V001", "name": "Delivery Van #1",   "type": "delivery",   "color": "#3498db",
@@ -70,7 +69,6 @@ def get_vehicle_positions(traffic: Dict[str, float] = None) -> List[Dict]:
 
         # Find which segment the vehicle is on
         acc = 0.0
-        seg_time = 0.0
         current_seg = segs[0]
         seg_frac = 0.0
         for seg in segs:
