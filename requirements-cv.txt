@@ -1,0 +1,27 @@
+# Computer-vision stack: vehicle/emergency-vehicle detection, license-plate
+# OCR, and multi-object tracking (app/ai/vision/*, app/api/routes/vision.py).
+#
+# Split from requirements.txt because these are heavy (torch + torchvision +
+# EasyOCR pull ~1-2 GB of downloads including CUDA-capable wheels on some
+# platforms) and the core traffic-simulation app runs fine without them.
+#
+# Install with:
+#   pip install -r requirements.txt -r requirements-cv.txt
+#
+# Notes:
+#   - CPU-only inference by default (see app/ai/vision/detector.py,
+#     device="cpu"). For GPU inference see the "Deploying CV inference to
+#     an EC2 GPU instance" section of README.md.
+#   - `ultralytics` downloads the yolov8n.pt checkpoint (~6MB) from GitHub
+#     on first use if it isn't already cached locally.
+#   - EasyOCR downloads its detection + recognition model weights (~64MB)
+#     from Jaided AI's servers on first use.
+#   - No system binary is required (this is why we chose EasyOCR over
+#     pytesseract, which requires the separate Tesseract OCR engine to be
+#     installed and on PATH — see README.md for the tradeoff).
+
+ultralytics==8.4.118
+opencv-python-headless==5.0.0.93
+easyocr==1.7.2
+torch==2.8.0
+torchvision==0.23.0
