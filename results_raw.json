@@ -1,0 +1,460 @@
+{
+  "detection": {
+    "per_image": [
+      {
+        "image": "bus.jpg",
+        "ground_truth_vehicles": 1,
+        "ground_truth_classes": {
+          "bus": 1
+        },
+        "predicted_vehicles": 1,
+        "predicted_classes": {
+          "bus": 1
+        },
+        "vehicle_level_tp": 1,
+        "vehicle_level_fp": 0,
+        "vehicle_level_fn": 0,
+        "class_exact_correct": 1,
+        "timing_ms": {
+          "detect": 8733.8,
+          "total": 8733.9
+        },
+        "note": "Ultralytics stock sample image; well-known composition (1 bus, several pedestrians)."
+      },
+      {
+        "image": "zidane.jpg",
+        "ground_truth_vehicles": 0,
+        "ground_truth_classes": {},
+        "predicted_vehicles": 0,
+        "predicted_classes": {},
+        "vehicle_level_tp": 0,
+        "vehicle_level_fp": 0,
+        "vehicle_level_fn": 0,
+        "class_exact_correct": 0,
+        "timing_ms": {
+          "detect": 151.8,
+          "total": 151.8
+        },
+        "note": "Negative control \u2014 two soccer players, no vehicles anywhere in frame."
+      },
+      {
+        "image": "manhattan_50th_st.jpg",
+        "ground_truth_vehicles": 4,
+        "ground_truth_classes": {
+          "truck": 1,
+          "bus": 1,
+          "car": 2
+        },
+        "predicted_vehicles": 3,
+        "predicted_classes": {
+          "bus": 1,
+          "car": 2
+        },
+        "vehicle_level_tp": 3,
+        "vehicle_level_fp": 0,
+        "vehicle_level_fn": 1,
+        "class_exact_correct": 3,
+        "timing_ms": {
+          "detect": 148.3,
+          "total": 148.3
+        },
+        "note": "Foreground yellow box truck (International brand, headlights on), a partially-occluded transit bus in the background, a yellow NYC taxi, and a dark sedan/SUV behind the taxi."
+      }
+    ],
+    "aggregate": {
+      "vehicle_level_precision": 1.0,
+      "vehicle_level_recall": 0.8,
+      "tp": 4,
+      "fp": 0,
+      "fn": 1
+    },
+    "qualitative_dense_scenes": [
+      {
+        "image": "auckland_traffic.jpg",
+        "predicted_vehicles": 37,
+        "predicted_classes": {
+          "car": 35,
+          "truck": 2
+        },
+        "timing_ms": {
+          "detect": 207.7,
+          "total": 209.0
+        }
+      },
+      {
+        "image": "herald_square_traffic.jpg",
+        "predicted_vehicles": 1,
+        "predicted_classes": {
+          "car": 1
+        },
+        "timing_ms": {
+          "detect": 274.3,
+          "total": 274.3
+        }
+      }
+    ]
+  },
+  "emergency_heuristic": {
+    "threshold": 0.35,
+    "total_vehicles_all_known_negative": 42,
+    "false_positives": 1,
+    "false_positive_rate": 0.023809523809523808,
+    "score_distribution_summary": {
+      "min": 0.0148,
+      "median": 0.066,
+      "max": 0.793
+    }
+  },
+  "plate_ocr": {
+    "per_sample": [
+      {
+        "index": 0,
+        "difficulty": "clean",
+        "ground_truth": "QAH2768",
+        "predicted": "QAH2768",
+        "confidence": 0.9988209073881963,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 1,
+        "difficulty": "clean",
+        "ground_truth": "PAC2657",
+        "predicted": "PAC2657",
+        "confidence": 0.6608015097843308,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 2,
+        "difficulty": "clean",
+        "ground_truth": "FPV0863",
+        "predicted": "FPV0863",
+        "confidence": 0.9620730689174218,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 3,
+        "difficulty": "clean",
+        "ground_truth": "FTC3332",
+        "predicted": "FTC3332",
+        "confidence": 0.991707207913242,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 4,
+        "difficulty": "clean",
+        "ground_truth": "SNZ3586",
+        "predicted": "SNZ3586",
+        "confidence": 0.8250986636988444,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 5,
+        "difficulty": "clean",
+        "ground_truth": "PSB2202",
+        "predicted": "PSB2202",
+        "confidence": 0.6921032243666504,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 6,
+        "difficulty": "clean",
+        "ground_truth": "JLV1367",
+        "predicted": "JLV1367",
+        "confidence": 0.999263367627943,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 7,
+        "difficulty": "clean",
+        "ground_truth": "PES1396",
+        "predicted": "PES1396",
+        "confidence": 0.9994323214408847,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 8,
+        "difficulty": "clean",
+        "ground_truth": "RVU2032",
+        "predicted": "RVU2032",
+        "confidence": 0.9682471688649176,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 9,
+        "difficulty": "clean",
+        "ground_truth": "XOS2486",
+        "predicted": "X0S2486",
+        "confidence": 0.9025123441067806,
+        "exact_match": false,
+        "char_accuracy": 0.8571428571428571
+      },
+      {
+        "index": 10,
+        "difficulty": "clean",
+        "ground_truth": "GGO2583",
+        "predicted": "GGO2583",
+        "confidence": 0.9894454676248664,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 11,
+        "difficulty": "clean",
+        "ground_truth": "ZDM7811",
+        "predicted": "ZDM7811",
+        "confidence": 0.9919393597413323,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 12,
+        "difficulty": "blur",
+        "ground_truth": "PKP4259",
+        "predicted": "PKP4259",
+        "confidence": 0.9920046817639788,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 13,
+        "difficulty": "blur",
+        "ground_truth": "GQC4498",
+        "predicted": "GQC4498",
+        "confidence": 0.9981998797604456,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 14,
+        "difficulty": "blur",
+        "ground_truth": "NCQ8513",
+        "predicted": "NCQ8513",
+        "confidence": 0.9969965382185333,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 15,
+        "difficulty": "blur",
+        "ground_truth": "NAI0988",
+        "predicted": "NAI0988",
+        "confidence": 0.9537152096721956,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 16,
+        "difficulty": "blur",
+        "ground_truth": "OCT8951",
+        "predicted": "OCT8951",
+        "confidence": 0.998354761586746,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 17,
+        "difficulty": "blur",
+        "ground_truth": "NPZ9767",
+        "predicted": "NPZ9767",
+        "confidence": 0.8603576529110136,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 18,
+        "difficulty": "blur",
+        "ground_truth": "LND2352",
+        "predicted": "LND2352",
+        "confidence": 0.9997815114998334,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 19,
+        "difficulty": "blur",
+        "ground_truth": "BBA3524",
+        "predicted": "BBA3524",
+        "confidence": 0.9999070913274994,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 20,
+        "difficulty": "blur",
+        "ground_truth": "OGM4063",
+        "predicted": "OGM4063",
+        "confidence": 0.999036218598381,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 21,
+        "difficulty": "blur",
+        "ground_truth": "RZC4382",
+        "predicted": "RZC4382",
+        "confidence": 0.8843462097486882,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 22,
+        "difficulty": "blur",
+        "ground_truth": "EMW0880",
+        "predicted": "EMWO880",
+        "confidence": 0.6474343055701784,
+        "exact_match": false,
+        "char_accuracy": 0.8571428571428571
+      },
+      {
+        "index": 23,
+        "difficulty": "blur",
+        "ground_truth": "WEM2403",
+        "predicted": "WEM2403",
+        "confidence": 0.8563230073232375,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 24,
+        "difficulty": "low_light",
+        "ground_truth": "LKY9571",
+        "predicted": "LKY9571",
+        "confidence": 0.9853529903628999,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 25,
+        "difficulty": "low_light",
+        "ground_truth": "TBP5819",
+        "predicted": "TBP5819",
+        "confidence": 0.9855768976872351,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 26,
+        "difficulty": "low_light",
+        "ground_truth": "KYO5006",
+        "predicted": "KYO5OOG",
+        "confidence": 0.4938395710104909,
+        "exact_match": false,
+        "char_accuracy": 0.5714285714285714
+      },
+      {
+        "index": 27,
+        "difficulty": "low_light",
+        "ground_truth": "GDQ4990",
+        "predicted": "GDQ4990",
+        "confidence": 0.9943666807668506,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 28,
+        "difficulty": "low_light",
+        "ground_truth": "WWJ1876",
+        "predicted": "WWJ1876",
+        "confidence": 0.9978382723775384,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 29,
+        "difficulty": "low_light",
+        "ground_truth": "YDD1526",
+        "predicted": "YDD1526",
+        "confidence": 0.9502408470567077,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 30,
+        "difficulty": "low_light",
+        "ground_truth": "GXB6803",
+        "predicted": "GXB6803",
+        "confidence": 0.9895072259142416,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 31,
+        "difficulty": "low_light",
+        "ground_truth": "SOC9610",
+        "predicted": "S0C9610",
+        "confidence": 0.41305337316526625,
+        "exact_match": false,
+        "char_accuracy": 0.8571428571428571
+      },
+      {
+        "index": 32,
+        "difficulty": "low_light",
+        "ground_truth": "JYZ0366",
+        "predicted": "JYZ0366",
+        "confidence": 0.8734821894508856,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 33,
+        "difficulty": "low_light",
+        "ground_truth": "YGE7141",
+        "predicted": "YGE7141",
+        "confidence": 0.9617883228567258,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 34,
+        "difficulty": "low_light",
+        "ground_truth": "GUC8828",
+        "predicted": "GUC8828",
+        "confidence": 0.586181812242904,
+        "exact_match": true,
+        "char_accuracy": 1.0
+      },
+      {
+        "index": 35,
+        "difficulty": "low_light",
+        "ground_truth": "AFI8926",
+        "predicted": "AF18926",
+        "confidence": 0.8310840567339076,
+        "exact_match": false,
+        "char_accuracy": 0.8571428571428571
+      }
+    ],
+    "by_difficulty": {
+      "clean": {
+        "n": 12,
+        "exact_match_accuracy": 0.9166666666666666,
+        "avg_char_accuracy": 0.9880952380952381
+      },
+      "blur": {
+        "n": 12,
+        "exact_match_accuracy": 0.9166666666666666,
+        "avg_char_accuracy": 0.9880952380952381
+      },
+      "low_light": {
+        "n": 12,
+        "exact_match_accuracy": 0.75,
+        "avg_char_accuracy": 0.9404761904761904
+      }
+    },
+    "overall": {
+      "n": 36,
+      "exact_match_accuracy": 0.8611111111111112,
+      "avg_char_accuracy": 0.9722222222222222
+    },
+    "total_time_s": 37.73,
+    "avg_time_per_plate_ms": 1047.9
+  }
+}
