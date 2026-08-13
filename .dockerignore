@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+.github/
+data/*.db
+results_raw.json
+tests/fixtures/synthetic_plates/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/

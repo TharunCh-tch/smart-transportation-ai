@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./data:/app/data   # persist the SQLite DB across container restarts
+    environment:
+      - DATABASE_URL=sqlite:///./data/transport.db
+    restart: unless-stopped
