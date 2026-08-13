@@ -1,5 +1,6 @@
-from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field
+from typing import List, Optional
+
+from pydantic import BaseModel
 
 
 class NodeOut(BaseModel):
@@ -69,6 +70,35 @@ class TrafficPrediction(BaseModel):
     label: str
     avg_traffic: float
     congested_roads: int
+
+
+class VisionSampleOut(BaseModel):
+    name: str
+    description: str
+    source: str
+
+
+class VisionHealthOut(BaseModel):
+    detector_loaded: bool
+    detector_weights: str
+    detector_device: str
+    ocr_loaded: bool
+    ultralytics_available: bool
+    easyocr_available: bool
+    opencv_available: bool
+
+
+class CVIncidentOut(BaseModel):
+    id: int
+    edge_id: str
+    severity: str
+    description: str
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    active: bool
+    source: str
+
+    model_config = {"from_attributes": True}
 
 
 class AnalyticsSummary(BaseModel):

@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.api.routes.transport import router as transport_router
+from app.api.routes.vision import router as vision_router
 from app.core.config import settings
 from app.core.database import Base, engine
 
@@ -38,6 +39,7 @@ app = FastAPI(
 
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.include_router(transport_router, prefix="/api", tags=["Transport"])
+app.include_router(vision_router, prefix="/api", tags=["Vision"])
 
 if FRONTEND.exists():
     app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")

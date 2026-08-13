@@ -1,4 +1,5 @@
 from sqlalchemy import Column, DateTime, Float, Integer, String, Text, func
+
 from app.core.database import Base
 
 
@@ -25,5 +26,6 @@ class TrafficIncident(Base):
     lat = Column(Float)
     lng = Column(Float)
     active = Column(Integer, default=1)
+    source = Column(String, default="simulated")   # "simulated" | "cv-detection"
     created_at = Column(DateTime, server_default=func.now())
     resolved_at = Column(DateTime, nullable=True)
