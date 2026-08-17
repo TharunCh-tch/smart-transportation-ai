@@ -11,6 +11,26 @@ computer-vision pipeline (added on top). They share a FastAPI backend and
 a SQLite database, and the CV module can write real detections into the
 same incident table the simulator uses.
 
+## Screenshots
+
+Live app, captured from a real running instance (not mockups).
+
+**Live traffic map** — 20 NYC intersections, roads colored by congestion, fleet vehicles moving in real time:
+
+![Live map with fleet vehicles and traffic-colored roads](docs/screenshots/live-map.jpg)
+
+**A\* route optimizer** — Times Square → Wall Street, with distance, travel time vs. baseline, and traffic delay:
+
+![Completed route optimization result](docs/screenshots/route-optimizer.jpg)
+
+**Traffic analytics** — network stats, active incidents, and the 12-hour forecast chart:
+
+![Traffic tab with forecast chart and active incidents](docs/screenshots/traffic-forecast.jpg)
+
+**Computer-vision detection** — real YOLOv8 inference (`/api/vision/detect/image`) on a bundled street sample, returning detections + emergency-heuristic scores as JSON:
+
+![Vision API JSON response showing real vehicle detections](docs/screenshots/vision-detection.jpg)
+
 ## Features
 
 | Feature | Details |
